@@ -217,6 +217,6 @@ Please use the latest Docker engine available (do not use the possibly outdated 
 ### License:
  - MIT
 
-##### For a very similar image based on tor-alpine use `joshgaby/tor-alpine`
- - https://hub.docker.com/r/joshgaby/tor-alpine
- - https://github.com/joshgaby/tor-alpine
+##### For a very similar image based on tor-alpine use `chriswayg/tor-alpine`
+ - https://hub.docker.com/r/chriswayg/tor-alpine
+ - https://github.com/chriswayg/tor-alpine
