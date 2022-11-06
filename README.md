@@ -1,6 +1,5 @@
-## Tor Relay Server on Docker (Debian)
-[![Build Status](https://travis-ci.org/chriswayg/tor-server.svg?branch=master)](https://travis-ci.org/chriswayg/tor-server)
-[![](https://images.microbadger.com/badges/image/chriswayg/tor-server.svg)](https://microbadger.com/images/chriswayg/tor-server)
+#### Forked
+This docker was forked from [chriswayg/tor-server](https://github.com/chriswayg/tor-server) and updated to run Debian Bullseye and the latest available Tor and obfs4proxy packages.
 
 #### A complete, efficient and secure Tor relay server Docker image
 *This docker image will install the latest current stable version of Tor server. It will run Tor as an unprivileged regular user, as recommended by torproject.org.*
@@ -31,7 +30,7 @@ docker run -d --init --name=tor-server_relay_1 --net=host \
 -e TOR_NICKNAME=Tor4 \
 -e CONTACT_EMAIL=tor4@example.org \
 -v $PWD/tor-data:/var/lib/tor \
---restart=always chriswayg/tor-server
+--restart=always joshgaby/tor-server
 ```
 
 This command will run a Tor relay server with a safe default configuration (not as an exit node). The server will autostart after restarting the host system. If you do not change the default Nickname 'Tor4', the startup script will add a randomized, pronouncable suffix to create a unique name. All Tor data will be preserved in the mounted Data Directory, even if you upgrade or remove the container.
@@ -83,7 +82,7 @@ docker run -d --init --name=tor-server_relay_1 --net=host \
 -e CONTACT_EMAIL=tor4@example.org \
 -v $PWD/tor-data:/var/lib/tor \
 -v $PWD/torrc:/etc/tor/torrc \
---restart=always chriswayg/tor-server
+--restart=always joshgaby/tor-server
 ```
 
 ### Move or upgrade the Tor relay
@@ -103,12 +102,12 @@ You can also reuse these identity keys from a previous Tor relay server installa
 
 ### Run Tor using docker-compose (recommended)
 
-Adapt the example `docker-compose.yml` with your settings or clone it from [Github](https://github.com/chriswayg/tor-server).
+Adapt the example `docker-compose.yml` with your settings or clone it from [Github](https://github.com/joshgaby/tor-server).
 ```
 version: '2.2'
 services:
   relay:
-    image: chriswayg/tor-server
+    image: joshgaby/tor-server
     init: true
     restart: always
     network_mode: host
@@ -125,7 +124,7 @@ services:
 
 - Configure the `docker-compose.yml` and optionally the `torrc` file, with your individual settings. Possibly install `git` first.
 ```
-cd /opt && git clone https://github.com/chriswayg/tor-server.git && cd tor-server
+cd /opt && git clone https://github.com/joshgaby/tor-server.git && cd tor-server
 nano docker-compose.yml
 ```
 

@@ -1,7 +1,6 @@
 ##=================== /etc/torrc =====================##
 # see /usr/local/etc/tor/torrc.sample and https://www.torproject.org/docs/tor-manual.html.en
 
-# Run Tor as a regular user (do not change this)
 User tord
 DataDirectory /var/lib/tor
 
@@ -22,8 +21,8 @@ ControlSocket 0
 # Run as a relay only (change policy to enable exit node)
 ExitPolicy reject *:*        # no exits allowed
 ExitPolicy reject6 *:*
-ExitRelay 1
-IPv6Exit 1
+ExitRelay 0
+IPv6Exit 0
 
 # Set limits
 #AccountingMax 999 GB

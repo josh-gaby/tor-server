@@ -38,6 +38,30 @@ if [ ! -e /tor-config-done ]; then
             echo -e "\nContactInfo ${CONTACT_EMAIL}" >> /etc/tor/torrc
         fi
     fi
+
+    # Port to advertise for incoming Tor connections.
+    if ! grep -q '^ORPort ' /etc/tor/torrc; then
+        echo -e "\\nORPort 9001" >> /etc/tor/torrc
+    fi
+
+    # Run Tor only as a server (no local applications)
+    if ! grep -q '^SocksPort ' /etc/tor/torrc; then
+        echo -e "\\nSocksPort 0" >> /etc/tor/torrc
+    fi
+
+    # Run as a relay only (not as an exit node)
+    if ! grep -q '^ExitPolicy ' /etc/tor/torrc; then
+        echo -e "\\nExitPolicy reject *:*" >> /etc/tor/torrc
+    fi
+
+    # Run Tor as a regular user (do not change this)
+    if ! grep -q '^User ' /etc/tor/torrc; then
+        echo -e "\\nUser ${TOR_USER}" >> /etc/tor/torrc
+    fi
+
+    if ! grep -q '^DataDirectory ' /etc/tor/torrc; then
+        echo -e "\\nDataDirectory /var/lib/tor" >> /etc/tor/torrc
+    fi
 fi
 
 echo -e "\n========================================================"
