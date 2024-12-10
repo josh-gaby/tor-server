@@ -1,5 +1,6 @@
 # Dockerfile for Tor Relay Server with obfs4proxy
-FROM debian:bookworm
+FROM debian:bookworm-slim
+USER root
 LABEL org.opencontainers.image.authors="josh.gaby@gmail.com"
 
 # Set a default Nickname
@@ -17,15 +18,14 @@ COPY 50unattended-upgrades /etc/apt/apt.conf.d/50unattended-upgrades
 COPY 20auto-upgrades /etc/apt/apt.conf.d/20auto-upgrades
 
 RUN wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | gpg --dearmor | tee /usr/share/keyrings/tor-archive-keyring.gpg >/dev/null
-RUN apt-get update \
-    && apt-get install -y tor deb.torproject.org-keyring\
-    && apt-get install -y pwgen \
-    && apt-get install -y tor-geoipdb \
-    && apt-get install -y obfs4proxy \
-    && mkdir -pv /usr/local/etc/tor/ \
-    && apt-get -y purge --auto-remove \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update
+RUN apt-get install -y tor deb.torproject.org-keyring
+RUN apt-get install -y tor-geoipdb
+RUN apt-get install -y obfs4proxy
+RUN mkdir -pv /usr/local/etc/tor/
+RUN apt-get -y purge --auto-remove
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
 
 # Rename Debian unprivileged user to tord \
 RUN usermod -l ${TOR_USER} debian-tor \
