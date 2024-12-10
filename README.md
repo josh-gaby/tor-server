@@ -1,5 +1,5 @@
 #### Forked
-This docker was forked from [chriswayg/tor-server](https://github.com/chriswayg/tor-server) and updated to run Debian Bullseye and the latest available Tor and obfs4proxy packages.
+This docker was forked from [chriswayg/tor-server](https://github.com/chriswayg/tor-server) and updated to run Debian 12 (Bookworm) and the latest available Tor and obfs4proxy packages. Unattended-Upgrades is also configured to keep Tor up to date automatically.
 
 #### A complete, efficient and secure Tor relay server Docker image
 *This docker image will install the latest current stable version of Tor server. It will run Tor as an unprivileged regular user, as recommended by torproject.org.*

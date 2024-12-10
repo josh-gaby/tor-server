@@ -1,13 +1,6 @@
 # Dockerfile for Tor Relay Server with obfs4proxy
-FROM debian:bullseye
-RUN echo 'deb http://deb.debian.org/debian bullseye-backports main' > /etc/apt/sources.list.d/backports.list
-MAINTAINER Josh josh.gaby@gmail.com
-
-ARG GPGKEY=A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
-ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE="True"
-ARG DEBCONF_NOWARNINGS="yes"
-ARG DEBIAN_FRONTEND=noninteractive
-ARG found=""
+FROM debian:bookworm
+LABEL org.opencontainers.image.authors="josh.gaby@gmail.com"
 
 # Set a default Nickname
 ENV TOR_NICKNAME=Tor4
@@ -16,35 +9,36 @@ ENV TERM=xterm
 
 # Install tor with GeoIP and obfs4proxy & backup torrc
 RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-        apt-utils \
- && apt-get install -y --no-install-recommends \
-        pwgen \
-        iputils-ping \
-        tor/bullseye-backports \
-        tor-geoipdb/bullseye-backports \
-        obfs4proxy/bullseye-backports \
- && mkdir -pv /usr/local/etc/tor/ \
- && mv -v /etc/tor/torrc /usr/local/etc/tor/torrc.sample \
- && apt-get purge --auto-remove -y \
-        apt-utils \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
- # Rename Debian unprivileged user to tord \
- && usermod -l ${TOR_USER} debian-tor \
- && groupmod -n ${TOR_USER} debian-tor
+    && apt-get install -y apt-transport-https wget gpg \
+    && apt-get install -y unattended-upgrades apt-listchanges
 
-# Copy Tor configuration file
-COPY ./torrc /etc/tor/torrc
+COPY tor.sources.list /etc/apt/sources.list.d/tor.list
+COPY 50unattended-upgrades /etc/apt/apt.conf.d/50unattended-upgrades
+COPY 20auto-upgrades /etc/apt/apt.conf.d/20auto-upgrades
 
-# Copy docker-entrypoint
+RUN wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | gpg --dearmor | tee /usr/share/keyrings/tor-archive-keyring.gpg >/dev/null
+RUN apt-get update \
+    && apt-get install -y tor deb.torproject.org-keyring\
+    && apt-get install -y pwgen \
+    && apt-get install -y tor-geoipdb \
+    && apt-get install -y obfs4proxy \
+    && mkdir -pv /usr/local/etc/tor/ \
+    && apt-get -y purge --auto-remove \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Rename Debian unprivileged user to tord \
+RUN usermod -l ${TOR_USER} debian-tor \
+    && groupmod -n ${TOR_USER} debian-tor
+
+COPY torrc /etc/tor/torrc
 COPY ./scripts/ /usr/local/bin/
 
 # Persist data
 VOLUME /etc/tor /var/lib/tor
 
-# ORPort, DirPort, SocksPort, ObfsproxyPort, MeekPort
-EXPOSE 9001 9030 9050 54444 7002
+# ORPort, DirPort, SocksPort, ObfsproxyPort
+EXPOSE 9001 9030 9050 54444
 
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["tor", "-f", "/etc/tor/torrc"]
