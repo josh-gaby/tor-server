@@ -68,11 +68,6 @@ if [ ! -e /tor-config-done ]; then
     if ! grep -q '^DataDirectory ' /etc/tor/torrc; then
         echo -e "\\nDataDirectory /var/lib/tor" >> /etc/tor/torrc
     fi
-
-    # Set the hard limit of open file descriptors really high.
-    # Tor will also potentially run out of ports.
-    echo "Setting ulimit..."
-    ulimit -SHn 65000
 fi
 
 echo -e "\n========================================================"
