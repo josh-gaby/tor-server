@@ -10,3 +10,4 @@ Thumbs.db
 
 # Private files
 production/
+tests/tor-data/
